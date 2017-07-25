@@ -1,3 +1,7 @@
+*   When using #or, extract the common conditions and put them before the OR condition.
+
+    *Maxime Handfield Lapointe*
+
 *   ApplicationRecord is no longer generated when generating models.  If you
     need to generate it, it can be created with `rails g application_record`.
 

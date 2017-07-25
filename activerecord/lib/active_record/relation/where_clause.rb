@@ -26,15 +26,18 @@ module ActiveRecord
       end
 
       def or(other)
-        if empty?
-          self
-        elsif other.empty?
-          other
-        else
-          WhereClause.new(
-            [ast.or(other.ast)],
-          )
-        end
+        common_p, left_p = predicates.partition { |p| other.predicates.include?(p) }
+        right_p = other.predicates.reject { |p| common_p.include?(p) }
+
+        return WhereClause.new(common_p) if left_p.empty? || right_p.empty?
+
+        left = WhereClause.new(left_p)
+        right = WhereClause.new(right_p)
+        or_predicate = left.ast.or(right.ast)
+
+        WhereClause.new(
+            common_p.push(or_predicate),
+        )
       end
 
       def to_h(table_name = nil)
